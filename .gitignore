@@ -1,0 +1,11 @@
+# Tag frequency database (created at runtime by the SQLite backend)
+tags/tag_frequency.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db

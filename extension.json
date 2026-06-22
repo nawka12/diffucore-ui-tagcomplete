@@ -1,0 +1,11 @@
+{
+  "name": "tagcomplete",
+  "title": "Tag Autocomplete",
+  "version": "0.1.0",
+  "author": "DominikDoom (ported to Diffucore UI)",
+  "description": "Tag autocompletion for the prompt and negative prompt textareas. Suggests tags from Danbooru/e621/derpibooru CSV files, LoRAs from models/loras/, wildcard files, and chant presets. Includes tag frequency tracking, alias/translation search, keyboard navigation, and wiki links. Configure the tag file, LoRA/wildcard sources, and key bindings in the Settings panel.",
+  "entry": "extension.py",
+  "web": "web",
+  "min_ui_version": "0.1.0",
+  "default_enabled": true
+}

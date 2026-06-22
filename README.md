@@ -24,7 +24,7 @@ links, and a local tag-frequency database that sorts often-used tags higher.
   even if the primary name doesn't match what you typed.
 - **Tag frequency tracking** — a SQLite database records which tags you
   select and how often, then sorts frequently-used tags higher in the
-  results. View and reset counts in the **Tag Usage** tab.
+  results.
 - **Keyboard navigation** — Arrow keys to move, Enter to select, Tab to
   insert the first result, Escape to close. All key bindings are
   configurable.
@@ -78,12 +78,6 @@ Open **Settings → Extensions → Tag Autocomplete** to configure:
 | **Use wildcards** | Enable `__wildcard__` completion |
 | **Frequency sort** | Track tag usage and sort frequent tags higher |
 | **Show wiki links** | Show `?` links to Danbooru/e621 wiki pages |
-
-## Tag Usage tab
-
-The **Tag Usage** tab (added to the main nav) shows every tag you've
-selected from the popup, ranked by how often you've used it. Click
-**Reset** on any row to clear that tag's count.
 
 ## Wildcards
 
@@ -148,8 +142,7 @@ This port adapts the extension to Diffucore UI's extension platform:
 - LoRA scanning uses Diffucore's `models/loras/` directory.
 - Wildcard scanning targets an optional `wildcards/` directory at the
   project root.
-- The settings panel is registered through `window.DiffucoreExt` and a
-  **Tag Usage** tab is added to the main nav.
+- The settings panel is registered through `window.DiffucoreExt`.
 - A1111-specific features that have no Diffucore equivalent were dropped:
   hypernetworks, textual inversion embeddings, webui style variables, UMI
   YAML wildcards, and the model-keyword hash-based trigger-word lookup.

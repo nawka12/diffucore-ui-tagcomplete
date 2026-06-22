@@ -60,8 +60,47 @@ function tacSyncTextarea(textArea) {
     textArea.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
-// Suppress the built-in LoRA autocomplete popup when our extension's
-// popup is active, so the two don't show simultaneously.
+// ── disable the built-in LoRA autocomplete ─────────────────────────
+// When the extension is active and its LoRA parser is enabled, we
+// monkey-patch the Alpine app's ``loraAutocomplete`` method so the
+// built-in ``<lora:…>`` dropdown never opens — the extension's own
+// LoRA parser handles ``<`` completion instead.  If the user later
+// disables the extension's "Use LoRAs" setting, the original method is
+// restored so the built-in works again.
+var _tacOriginalLoraAutocomplete = null;
+var _tacLoraPatched = false;
+
+function tacPatchBuiltinLoraAC() {
+    if (_tacLoraPatched) return;
+    if (typeof Alpine === "undefined") return;
+    try {
+        const root = document.querySelector("[x-data]");
+        if (!root) return;
+        const data = Alpine.$data(root);
+        if (!data || typeof data.loraAutocomplete !== "function") return;
+
+        // Save the original so we can restore it if the user disables
+        // the extension's LoRA completion.
+        _tacOriginalLoraAutocomplete = data.loraAutocomplete.bind(data);
+
+        // Replace with a guard: no-op when the extension handles LoRAs,
+        // delegate to the original otherwise.
+        data.loraAutocomplete = function (el, opts) {
+            if (TAC_CFG && TAC_CFG.useLoras) {
+                // Extension handles LoRA completion — keep the built-in
+                // dropdown closed so the two never compete.
+                this.loraAC.open = false;
+                return;
+            }
+            return _tacOriginalLoraAutocomplete(el, opts);
+        };
+
+        _tacLoraPatched = true;
+    } catch (e) { /* Alpine not ready yet — retry on next call */ }
+}
+
+// Force-close the built-in dropdown immediately (used while the patch
+// is being installed or if the Alpine component isn't ready yet).
 function tacSuppressBuiltinLoraAC() {
     if (typeof Alpine === "undefined") return;
     try {

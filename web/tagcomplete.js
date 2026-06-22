@@ -981,6 +981,19 @@ async function tacInit() {
     await syncOptions();
     if (!TAC_CFG) { setTimeout(tacInit, 500); return; }
 
+    // Disable the built-in <lora:> autocomplete so the extension's own
+    // LoRA parser handles it instead. Done before tacSetup so the patch
+    // is in place by the time the user can type. Retry in case the
+    // Alpine component isn't fully initialized yet.
+    tacPatchBuiltinLoraAC();
+    if (!_tacLoraPatched) {
+        let patchTries = 0;
+        const patchInterval = setInterval(() => {
+            tacPatchBuiltinLoraAC();
+            if (_tacLoraPatched || ++patchTries > 20) clearInterval(patchInterval);
+        }, 250);
+    }
+
     await tacSetup();
     tacInitialized = true;
     console.log("TAC: Tag Autocomplete initialized");

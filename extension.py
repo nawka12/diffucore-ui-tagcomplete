@@ -234,6 +234,7 @@ DEFAULTS: Dict[str, Any] = {
     "appendComma": True,
     "appendSpace": True,
     "alwaysSpaceAtEnd": True,
+    "addArtistAtSymbol": False,
     "wildcardCompletionMode": "To next folder level",
     "extraNetworksDefaultMultiplier": 1.0,
     "alias_searchByAlias": True,
@@ -290,6 +291,7 @@ class ConfigUpdate(BaseModel):
     appendComma: Optional[bool] = None
     appendSpace: Optional[bool] = None
     alwaysSpaceAtEnd: Optional[bool] = None
+    addArtistAtSymbol: Optional[bool] = None
     wildcardCompletionMode: Optional[str] = None
     extraNetworksDefaultMultiplier: Optional[float] = None
     alias_searchByAlias: Optional[bool] = None

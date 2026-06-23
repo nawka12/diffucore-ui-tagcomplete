@@ -220,6 +220,7 @@ async function syncOptions() {
         appendComma: s.appendComma,
         appendSpace: s.appendSpace,
         alwaysSpaceAtEnd: s.alwaysSpaceAtEnd,
+        addArtistAtSymbol: s.addArtistAtSymbol,
         wildcardCompletionMode: s.wildcardCompletionMode,
         extraNetworksDefaultMultiplier: s.extraNetworksDefaultMultiplier,
         wcWrap: "__",
@@ -349,6 +350,18 @@ function isEnabled() {
     return TAC_CFG.activeIn.global !== false;
 }
 
+// Whether a tag result is an artist tag, based on its category in the active
+// tag file. Danbooru/e621 use category 1; the merged file keeps danbooru
+// artists at 1 and shifts e621 artists to 8.
+function isArtistResult(result) {
+    if (result.type !== ResultType.tag) return false;
+    let name = TAC_CFG.tagFile.split(".")[0].toLowerCase();
+    let cat = String(result.category);
+    if (name.startsWith("danbooru_e621_merged")) return cat === "1" || cat === "8";
+    if (name.startsWith("danbooru") || name.startsWith("e621")) return cat === "1";
+    return false;
+}
+
 // ── regexes ────────────────────────────────────────────────────────
 const WEIGHT_REGEX = /[([]([^()[\]:|]+)(?::(?:\d+(?:\.\d+)?|\.\d+))?[)\]]/g;
 const POINTY_REGEX = /<[^\s,<](?:[^\t\n\r,<>]*>|[^\t\n\r,> ]*)/g;
@@ -380,6 +393,11 @@ async function insertTextAtCursor(textArea, result, tagword, tabCompletedWithout
                 .replaceAll("(", "\\(").replaceAll(")", "\\)")
                 .replaceAll("[", "\\[").replaceAll("]", "\\]");
         }
+    }
+
+    // Prefix artist tags with '@' if enabled (some models use this to mark them)
+    if (TAC_CFG.addArtistAtSymbol && isArtistResult(result)) {
+        sanitizedText = "@" + sanitizedText;
     }
 
     // Wildcard path completion modes
@@ -1073,6 +1091,7 @@ if (typeof window !== "undefined" && window.DiffucoreExt) {
                     <label class="chip"><input type="checkbox" id="tac-escape"> Escape parentheses</label>
                     <label class="chip"><input type="checkbox" id="tac-comma"> Append comma</label>
                     <label class="chip"><input type="checkbox" id="tac-space"> Append space</label>
+                    <label class="chip"><input type="checkbox" id="tac-artist-at"> Prefix artist tags with @</label>
                   </div>
                   <div style="display:flex;flex-wrap:wrap;gap:8px">
                     <label class="chip"><input type="checkbox" id="tac-loras"> Use LoRAs</label>
@@ -1118,6 +1137,7 @@ if (typeof window !== "undefined" && window.DiffucoreExt) {
                     "tac-escape": s.escapeParentheses,
                     "tac-comma": s.appendComma,
                     "tac-space": s.appendSpace,
+                    "tac-artist-at": s.addArtistAtSymbol,
                     "tac-loras": s.useLoras,
                     "tac-wildcards": s.useWildcards,
                     "tac-freq": s.frequencySort,
@@ -1146,6 +1166,7 @@ if (typeof window !== "undefined" && window.DiffucoreExt) {
                     escapeParentheses: el.querySelector("#tac-escape").checked,
                     appendComma: el.querySelector("#tac-comma").checked,
                     appendSpace: el.querySelector("#tac-space").checked,
+                    addArtistAtSymbol: el.querySelector("#tac-artist-at").checked,
                     useLoras: el.querySelector("#tac-loras").checked,
                     useWildcards: el.querySelector("#tac-wildcards").checked,
                     frequencySort: el.querySelector("#tac-freq").checked,

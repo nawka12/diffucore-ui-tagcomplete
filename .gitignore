@@ -1,6 +1,9 @@
 # Tag frequency database (created at runtime by the SQLite backend)
 tags/tag_frequency.db
 
+# Local data-scraping scripts (kept out of the repo)
+tags/scripts/
+
 # Python
 __pycache__/
 *.py[cod]

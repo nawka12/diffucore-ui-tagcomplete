@@ -288,6 +288,13 @@ function createResultsDiv(textArea) {
     parentDiv.setAttribute("class", `tac-autocomplete-parent${typeClass}`);
     parentDiv.style.display = "none";
 
+    // The popup lives inside the prompt's <label>, which forwards clicks to its
+    // first button ("Undo enhance"), wiping the prompt. Cancel that, but let the
+    // wiki links open.
+    parentDiv.addEventListener("click", (e) => {
+        if (!e.target.closest("a")) e.preventDefault();
+    });
+
     resultsDiv.style.maxHeight = `${TAC_CFG.maxResults * 50}px`;
     resultsDiv.setAttribute("class", `tac-autocomplete-results${typeClass} notranslate`);
     resultsDiv.setAttribute("translate", "no");
